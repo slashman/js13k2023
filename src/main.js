@@ -11,6 +11,17 @@ var colors = [
   '#B10DC9', '#FFDC00', '#F012BE',
 ];
 
+var levels = [
+  { cityName: 'Ryazan', size: 20, lines: 2, soldiers: 8 },
+  { cityName: 'Kolomna', size: 25, lines: 3, soldiers: 15 },
+  { cityName: 'Moscow', size: 10, lines: 3, soldiers: 20 },
+  { cityName: 'Vladimir', size: 30, lines: 4, soldiers: 15},
+  { cityName: 'Suzdal', size: 10, lines: 3, soldiers: 20 },
+  { cityName: 'Tver', size: 20, lines: 3, soldiers: 20 },
+  { cityName: 'Kostroma', size: 60, lines: 3, soldiers: 15 },
+  { cityName: 'Kiev', size: 30, lines: 2, soldiers: 10 }
+]
+
 var hordeSpeed = 100;
 
 var state;
@@ -24,76 +35,20 @@ var soldiers;
 var mainBall;
 var year;
 var city;
+var round;
+var roundWon;
+var currentCityName;
+var score;
 
 function start() {
   state = 'running';
   gameOverMessage = '';
   rand = rng(1);
-  supplyLinesCount = 4;
   hordeStrength = 0;
-  balls = [];
-  supplyLines = [];
-  soldiers = [];
+  score = 0;
   year = 1200;
-
-  balls.push({
-    x: canvas.width * 0.75,
-    y: canvas.height * 0.75,
-    radius: 15,
-    dx: 0,
-    dy: 0,
-    color: rand.pick(colors),
-    cooldown: Math.random()
-  });
-
-  for (var i = 0; i < 49; i++) {
-    balls.push({
-      x: canvas.width * 0.75 + rand.int(canvas.width),
-      y: canvas.height / 2  + rand.int(canvas.height / 2),
-      radius: 10,
-      dx: 0,
-      dy: 0,
-      color: rand.pick(colors),
-      cooldown: -1
-    });
-  }
-
-  hordeStrength = balls.length * 10;
-
-  for (var i = 0; i < supplyLinesCount; i++) {
-    supplyLines.push({
-      x: rand.int(canvas.width),
-      y: rand.int(canvas.height / 2),
-      radius: 20,
-      dx: Math.random() * hordeSpeed / 2,
-      dy: Math.random() * hordeSpeed / 2,
-      color: '#FF0000',
-      cooldown: Math.random()
-    });
-  }
-
-  for (var i = 0; i < 15; i++) {
-    soldiers.push({
-      x: rand.int(canvas.width),
-      y: rand.int(canvas.height / 2),
-      radius: 15,
-      dx: Math.random() * hordeSpeed / 2,
-      dy: Math.random() * hordeSpeed / 2,
-      color: '#00FF00',
-      cooldown: Math.random()
-    });
-    if (i < supplyLinesCount){
-      soldiers[i].supplyLine = supplyLines[i];
-    }
-  }
-  mainBall = balls[0];
-  mainBall.dx = -hordeSpeed;
-
-  city = {
-    x: canvas.width * 0.5,
-    y: canvas.height * 0.25,
-    radius: 30
-  }
+  round = -1;
+  nextRound();
 }
 
 raf.start(function(elapsed) {
@@ -260,26 +215,20 @@ raf.start(function(elapsed) {
       if (state === 'running') {
         hordeStrength -= 0.2;
       }
-      if (hordeStrength < 100) {
+      if (hordeStrength <= 0) {
+        hordeStrength = 0;
         gameOver('The horde disbands')
       }
     };
   }
 
-  // Handle collision against the canvas's edges
   if (soldier.x - soldier.radius < 0 && soldier.dx < 0 || soldier.x + soldier.radius > canvas.width && soldier.dx > 0) soldier.dx = -soldier.dx * 0.7;
   if (soldier.y - soldier.radius < 0 && soldier.dy < 0 || soldier.y + soldier.radius > canvas.height && soldier.dy > 0) soldier.dy = -soldier.dy * 0.7;
 
-  // Update ball position
   soldier.x += soldier.dx * elapsed;
   soldier.y += soldier.dy * elapsed;
-
-  // Render the ball
-  ctx.beginPath();
-  ctx.arc(soldier.x, soldier.y, soldier.radius, 0, Math.PI * 2, true);
-  ctx.closePath();
   ctx.fillStyle = soldier.color;
-  ctx.fill();
+  ctx.fillRect(soldier.x - soldier.radius, soldier.y - soldier.radius, soldier.radius * 2, soldier.radius * 2);
 });
 
 for (var i = 0; i < balls.length; i++) {
@@ -291,8 +240,10 @@ for (var i = 0; i < balls.length; i++) {
     city.radius -= 0.1;
   }
 }
-if (city.radius < 3) {
-  gameOver('You have invaded Ryazan!')
+if (city.radius < 3 && state === 'running') {
+  roundWon = true;
+  score += Math.floor(hordeStrength);
+  gameOver('You have invaded ' + currentCityName + '!')
 }
 
 if (supplyLinesCount > 0) {
@@ -312,14 +263,25 @@ if (supplyLinesCount > 0) {
 
   ctx.fillStyle = '#000000';
   ctx.font = "24px Georgia";
-  ctx.fillText("Supply Lines: " + supplyLinesCount, 10, 30);
-  ctx.fillText("Horde Strength: " + Math.floor(hordeStrength), 10, 80);
-  ctx.fillText("Year: " + Math.floor(year), 300, 30);
+  ctx.textAlign = 'left';
+  ctx.fillText("Supply Lines: " + supplyLinesCount, 10, 530);
+  ctx.fillText("Horde Strength: " + Math.floor(hordeStrength), 10, 580);
+  ctx.textAlign = 'right';
+  ctx.fillText("Round: " + (round + 1), 780, 530);
+  ctx.fillText("Score: " + (score), 780, 580);
+  ctx.textAlign = 'center';
+  ctx.fillText("Year " + Math.floor(year), canvas.width / 2, 580);
   if (state === 'gameOver') {
-    ctx.fillText(gameOverMessage, 10, 140);
-    ctx.fillText('Press [Enter to restart]', 10, 190);
-    
+    ctx.fillText(gameOverMessage, canvas.width / 2, 40);
+    if (roundWon) {
+      ctx.fillText('Press [Enter to raid on]', canvas.width / 2, 90);
+    } else {
+      ctx.fillText('Press [Enter to restart]', canvas.width / 2, 90);
+    }
   }
+  ctx.font = "16px Georgia";
+  ctx.textAlign = 'center';
+  ctx.fillText(currentCityName, canvas.width / 2, canvas.height * 0.25 + 50);
   
 });
 
@@ -334,7 +296,11 @@ function gameOver (message) {
 
 input.typed('Enter', function () {
   if (state === 'gameOver') {
-    state = 'title';
+    if (roundWon) {
+      nextRound();
+    } else {
+      state = 'title';
+    }
   } else if (state === 'title') {
     start();
   }
@@ -343,15 +309,88 @@ input.typed('Enter', function () {
 function drawTitle (ctx) {
   ctx.fillStyle = '#000000';
   ctx.font = "48px Georgia";
-  ctx.fillText("The first horde", 10, 60);
+  ctx.textAlign = 'left';
+  ctx.fillText("The First Horde", 10, 60);
   ctx.font = "32px Georgia";
   ctx.fillText("Use the cursor keys to guide your horde.", 10, 120);
-  ctx.fillText("Avoid the Rus army (green dots) if possible.", 10, 160);
-  ctx.fillText("Destroy the supply lines (red dots) to weaken the", 10, 200);
-  ctx.fillText("defenses of Ryazan.", 10, 240);
-  ctx.fillText("Raid the city, Ryazan, to win.", 10, 320);
+  ctx.fillText("Avoid the Rus army (red squares) if possible.", 10, 160);
+  ctx.fillText("Destroy the supply lines (green circles) to weaken the", 10, 200);
+  ctx.fillText("defenses of the cities.", 10, 240);
+  ctx.fillText("Raid the cities to win.", 10, 320);
   ctx.fillText("An entry for js13k 2023 by slashie and stoltverd", 10, 400);
   ctx.fillText("Press [Enter] to start", 10, 480);
+}
+
+function nextRound () {
+  roundWon = false;
+  round++;
+  var levelData = levels[round];
+  supplyLinesCount = levelData.lines; 
+  balls = [];
+  supplyLines = [];
+  soldiers = [];
+  
+  balls.push({
+    x: canvas.width * 0.75,
+    y: canvas.height * 0.75,
+    radius: 15,
+    dx: 0,
+    dy: 0,
+    color: rand.pick(colors),
+    cooldown: Math.random()
+  });
+
+  for (var i = 0; i < 49; i++) {
+    balls.push({
+      x: canvas.width * 0.75 + rand.int(canvas.width),
+      y: canvas.height / 2  + rand.int(canvas.height / 2),
+      radius: 10,
+      dx: 0,
+      dy: 0,
+      color: rand.pick(colors),
+      cooldown: -1
+    });
+  }
+
+  hordeStrength = balls.length * 10 - 100;
+
+  for (var i = 0; i < supplyLinesCount; i++) {
+    supplyLines.push({
+      x: rand.int(canvas.width),
+      y: rand.int(canvas.height / 2),
+      radius: 20,
+      dx: Math.random() * hordeSpeed / 2,
+      dy: Math.random() * hordeSpeed / 2,
+      color: '#00FF00',
+      cooldown: Math.random()
+    });
+  }
+
+  for (var i = 0; i < levelData.soldiers; i++) {
+    soldiers.push({
+      x: rand.int(canvas.width),
+      y: rand.int(canvas.height / 2),
+      radius: 15,
+      dx: Math.random() * hordeSpeed / 2,
+      dy: Math.random() * hordeSpeed / 2,
+      color: '#FF0000',
+      cooldown: Math.random()
+    });
+    if (i < supplyLinesCount){
+      soldiers[i].supplyLine = supplyLines[i];
+    }
+  }
+  mainBall = balls[0];
+  mainBall.dx = -hordeSpeed;
+
+  city = {
+    x: canvas.width * 0.5,
+    y: canvas.height * 0.25,
+    radius: levelData.size
+  }
+
+  currentCityName = levelData.cityName;
+  state = 'running';
 }
 
 state = 'title';
