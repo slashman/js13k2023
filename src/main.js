@@ -394,3 +394,26 @@ function nextRound () {
 }
 
 state = 'title';
+
+let W = canvas.width;
+let H = canvas.height;
+
+(function() {
+  window.addEventListener('resize', resizeCanvas, false);
+  function resizeCanvas() {
+    ih = window.innerHeight - 30;
+    iw = window.innerWidth - 20;
+    rat = 800 / 600;
+    if (iw > ih * rat) {
+      iw = ih * rat;
+    } else {
+      ih = iw * (1/rat);
+    }
+    canvas.style.width = iw + 'px';
+    canvas.style.height = ih + 'px';
+    W = canvas.width;
+    H = canvas.height;
+  }
+  
+  resizeCanvas();
+})();
