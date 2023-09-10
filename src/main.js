@@ -163,6 +163,11 @@ raf.start(function(elapsed) {
     ctx.closePath();
     ctx.fillStyle = ball.color;
     ctx.fill();
+    if (ball === mainBall) {
+      ctx.fillStyle = '#000000';
+      ctx.font = "24px Georgia";
+      ctx.fillText("♠", ball.x, ball.y + 8);
+    }
   }
 
   for (var j = 0; j < supplyLines.length; j++) {
