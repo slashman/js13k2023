@@ -373,16 +373,6 @@ function nextRound () {
   supplyLines = [];
   soldiers = [];
   forests = [];
-  
-  balls.push({
-    x: canvas.width * 0.75,
-    y: canvas.height * 0.75,
-    radius: 15,
-    dx: 0,
-    dy: 0,
-    color: rand.pick(colors),
-    cooldown: Math.random()
-  });
 
   bgColor = rand.pick(landColors);
 
@@ -397,6 +387,16 @@ function nextRound () {
       cooldown: -1
     });
   }
+
+  balls.push({
+    x: canvas.width * 0.75,
+    y: canvas.height * 0.75,
+    radius: 15,
+    dx: 0,
+    dy: 0,
+    color: rand.pick(colors),
+    cooldown: Math.random()
+  });
 
   hordeStrength = balls.length * 10 - 100;
 
@@ -440,7 +440,7 @@ function nextRound () {
       soldiers[i].supplyLine = supplyLines[i];
     }
   }
-  mainBall = balls[0];
+  mainBall = balls[balls.length - 1];
   mainBall.dx = -hordeSpeed;
 
   city = {
