@@ -298,9 +298,11 @@ if (supplyLinesCount > 0) {
   ctx.fillStyle = supplyLinesCount > 0 ? bgColor : '#000000';
   ctx.fill();
 
-  ctx.fillStyle = supplyLinesCount > 0 ? '#000000' : bgColor;
-  ctx.font = "24px Georgia";
-  ctx.fillText("♜", city.x, city.y + 8);
+  if (city.radius >= 3) {
+    ctx.fillStyle = supplyLinesCount > 0 ? '#000000' : bgColor;
+    ctx.font = "24px Georgia";
+    ctx.fillText("♜", city.x, city.y + 8);
+  }
 
   ctx.fillStyle = '#000000';
   ctx.font = "24px Georgia";
