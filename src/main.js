@@ -471,6 +471,15 @@ let H = canvas.height;
     canvas.style.height = ih + 'px';
     W = canvas.width;
     H = canvas.height;
+    if (iw > ih * rat) {
+      document.getElementById('touchControls').style.display = 'none';
+    } else {
+      document.getElementById('touchControls').style.display = 'block';
+      buttonHeight = (window.innerHeight - ih - 7 * 10) / 4;
+      document.querySelectorAll('.touchButton').forEach(function(button) {
+        button.style.height = buttonHeight + 'px';
+      })
+    }
   }
   
   resizeCanvas();
