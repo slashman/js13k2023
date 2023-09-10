@@ -462,6 +462,12 @@ let H = canvas.height;
     ih = window.innerHeight - 30;
     iw = window.innerWidth - 20;
     rat = 800 / 600;
+
+    if (window.innerWidth > window.screen.width) {
+      // The innerWidth is < 600
+      iw = window.screen.width - 20;
+    }
+    
     if (iw > ih * rat) {
       iw = ih * rat;
     } else {
