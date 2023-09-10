@@ -26,7 +26,7 @@ var levels = [
   { cityName: 'Tver', size: 20, lines: 3, soldiers: 15, forests: 6 },
   { cityName: 'Kostroma', size: 60, lines: 3, soldiers: 10, forests: 8 },
   { cityName: 'Kiev', size: 30, lines: 2, soldiers: 10, forests: 10 }
-]
+];
 
 var hordeSpeed = 100;
 
@@ -61,7 +61,6 @@ function start() {
 }
 
 raf.start(function(elapsed) {
-  // Clear the screen
   ctx.fillStyle = bgColor;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -85,7 +84,6 @@ raf.start(function(elapsed) {
     ctx.fill();
   });
 
-  // Update each balls
   for (var j = 0; j < balls.length; j++) {
     var ball = balls[j];
     if (ball === mainBall && state === 'running') {
@@ -104,7 +102,7 @@ raf.start(function(elapsed) {
       }
     } else {
       if (ball.cooldown < 0) {
-        // Walk towards main ball
+        // Walk towards leader
         var angle = Math.atan2(mainBall.y - ball.y, mainBall.x - ball.x);
         if (state === 'gameOver') {
           angle = Math.random() * Math.PI * 2;
@@ -119,12 +117,11 @@ raf.start(function(elapsed) {
           if (ball2 === ball)
             break;
           if (Math.abs(ball.x - ball2.x) <= ball.radius * 2 && Math.abs(ball.y - ball2.y) <= ball.radius * 2) {
-            //angle = Math.random() * Math.PI * 2;
             angle = (angle - Math.PI / 4) + Math.random() * (Math.PI / 2);
             ball.dx = hordeSpeed * Math.cos(angle) * 0.9;
             ball.dy = hordeSpeed * Math.sin(angle) * 0.9;
             break;
-          };   
+          };
         }
         ball.cooldown = 0.5 + Math.random() * 0.5;
       } else {
@@ -146,10 +143,8 @@ raf.start(function(elapsed) {
         break;
       }
     }
-    // Update ball position
     ball.x += bdx * elapsed;
     ball.y += bdy * elapsed;
-
     if (ball.radius <= 3) {
       if (state === 'running') {
         hordeStrength -= ball.radius;
@@ -281,7 +276,7 @@ for (var i = 0; i < balls.length; i++) {
 if (city.radius < 3 && state === 'running') {
   roundWon = true;
   score += Math.floor(hordeStrength);
-  gameOver('You have invaded ' + currentCityName + '!')
+  gameOver('You have invaded ' + currentCityName + '!');
 }
 
 if (supplyLinesCount > 0) {
@@ -366,7 +361,7 @@ function nextRound () {
   roundWon = false;
   round++;
   var levelData = levels[round];
-  supplyLinesCount = levelData.lines; 
+  supplyLinesCount = levelData.lines;
   balls = [];
   supplyLines = [];
   soldiers = [];
@@ -453,9 +448,6 @@ function nextRound () {
 
 state = 'title';
 
-let W = canvas.width;
-let H = canvas.height;
-
 (function() {
   window.addEventListener('resize', resizeCanvas, false);
   function resizeCanvas() {
@@ -475,8 +467,6 @@ let H = canvas.height;
     }
     canvas.style.width = iw + 'px';
     canvas.style.height = ih + 'px';
-    W = canvas.width;
-    H = canvas.height;
     if (iw > ih * rat) {
       document.getElementById('touchControls').style.display = 'none';
     } else {

@@ -13,7 +13,7 @@ function isDown(keyCode){
   return pressed[keyCode];
 };
 function typed(keyCode, callback){
-  typedCallbacks[keyCode] = callback;   
+  typedCallbacks[keyCode] = callback;
 }
 
 module.exports = {
