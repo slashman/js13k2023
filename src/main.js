@@ -19,7 +19,7 @@ var landColors = [
 
 var levels = [
   { cityName: 'Ryazan', size: 20, lines: 2, soldiers: 9, forests: 6 },
-  { cityName: 'Kolomna', size: 25, lines: 3, soldiers: 10, forests: 8 },
+  { cityName: 'Kolomna', size: 25, lines: 3, soldiers: 8, forests: 4 },
   { cityName: 'Moscow', size: 10, lines: 3, soldiers: 15, forests: 8 },
   { cityName: 'Vladimir', size: 30, lines: 4, soldiers: 10, forests: 7},
   { cityName: 'Suzdal', size: 10, lines: 3, soldiers: 15, forests: 10 },
@@ -248,7 +248,7 @@ raf.start(function(elapsed) {
     var ball = balls[i];
     if (Math.abs(ball.x - soldier.x) <= soldier.radius * 2
      && Math.abs(ball.y - soldier.y) <= soldier.radius * 2 && Math.random() > 0.7) {
-      ball.radius -= 0.2;
+      ball.radius -= 0.1;
       if (state === 'running') {
         hordeStrength -= 0.2;
       }
