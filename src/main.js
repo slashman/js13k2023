@@ -18,14 +18,14 @@ var landColors = [
 ]
 
 var levels = [
-  { cityName: 'Ryazan', size: 20, lines: 2, soldiers: 8 },
-  { cityName: 'Kolomna', size: 25, lines: 3, soldiers: 15 },
-  { cityName: 'Moscow', size: 10, lines: 3, soldiers: 20 },
-  { cityName: 'Vladimir', size: 30, lines: 4, soldiers: 15},
-  { cityName: 'Suzdal', size: 10, lines: 3, soldiers: 20 },
-  { cityName: 'Tver', size: 20, lines: 3, soldiers: 20 },
-  { cityName: 'Kostroma', size: 60, lines: 3, soldiers: 15 },
-  { cityName: 'Kiev', size: 30, lines: 2, soldiers: 10 }
+  { cityName: 'Ryazan', size: 20, lines: 2, soldiers: 9, forests: 6 },
+  { cityName: 'Kolomna', size: 25, lines: 3, soldiers: 10, forests: 8 },
+  { cityName: 'Moscow', size: 10, lines: 3, soldiers: 15, forests: 8 },
+  { cityName: 'Vladimir', size: 30, lines: 4, soldiers: 10, forests: 7},
+  { cityName: 'Suzdal', size: 10, lines: 3, soldiers: 15, forests: 10 },
+  { cityName: 'Tver', size: 20, lines: 3, soldiers: 15, forests: 6 },
+  { cityName: 'Kostroma', size: 60, lines: 3, soldiers: 10, forests: 8 },
+  { cityName: 'Kiev', size: 30, lines: 2, soldiers: 10, forests: 10 }
 ]
 
 var hordeSpeed = 100;
@@ -38,6 +38,7 @@ var hordeStrength;
 var balls;
 var supplyLines;
 var soldiers;
+var forests;
 var mainBall;
 var year;
 var city;
@@ -75,6 +76,14 @@ raf.start(function(elapsed) {
       gameOver('The XIII century is over.');
     }
   }
+
+  forests.forEach(function(forest) {
+    ctx.beginPath();
+    ctx.arc(forest.x, forest.y, forest.radius, 0, Math.PI * 2, true);
+    ctx.closePath();
+    ctx.fillStyle = forest.color;
+    ctx.fill();
+  });
 
   // Update each balls
   for (var j = 0; j < balls.length; j++) {
@@ -127,9 +136,19 @@ raf.start(function(elapsed) {
     if (ball.x - ball.radius < 0 && ball.dx < 0 || ball.x + ball.radius > canvas.width && ball.dx > 0) ball.dx = -ball.dx * 0.7;
     if (ball.y - ball.radius < 0 && ball.dy < 0 || ball.y + ball.radius > canvas.height && ball.dy > 0) ball.dy = -ball.dy * 0.7;
 
+    var bdx = ball.dx;
+    var bdy = ball.dy;
+    for (var k = 0; k < forests.length; k++) {
+      var forest = forests[k];
+      if (Math.abs(ball.x - forest.x) <= ball.radius * 2 && Math.abs(ball.y - forest.y) <= ball.radius * 2) {
+        bdx *= 0.3;
+        bdy *= 0.3;
+        break;
+      }
+    }
     // Update ball position
-    ball.x += ball.dx * elapsed;
-    ball.y += ball.dy * elapsed;
+    ball.x += bdx * elapsed;
+    ball.y += bdy * elapsed;
 
     if (ball.radius <= 3) {
       if (state === 'running') {
@@ -138,7 +157,7 @@ raf.start(function(elapsed) {
       balls.splice(j, 1);
       j--;
       if (ball === mainBall) {
-        gameOver('Batu Khan is dead.');
+        gameOver('The Khan is dead.');
       }
       continue;
     }
@@ -351,6 +370,7 @@ function nextRound () {
   balls = [];
   supplyLines = [];
   soldiers = [];
+  forests = [];
   
   balls.push({
     x: canvas.width * 0.75,
@@ -388,6 +408,20 @@ function nextRound () {
       color: '#00FF00',
       cooldown: Math.random()
     });
+  }
+
+  for (var i = 0; i < levelData.forests; i++) {
+    var blobs = rand.int(5) + 10;
+    var fx = rand.int(canvas.width);
+    var fy = rand.int(canvas.height / 2);
+    for (var j = 0; j < blobs; j++) {
+      forests.push({
+        x: fx - 40 + rand.int(80),
+        y: fy - 40 + rand.int(80),
+        radius: 20 + rand.int(10),
+        color: '#228B22'
+      });
+    }
   }
 
   for (var i = 0; i < levelData.soldiers; i++) {
