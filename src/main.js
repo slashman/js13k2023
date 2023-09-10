@@ -6,10 +6,16 @@ var canvas = document.querySelector('#game');
 var ctx = canvas.getContext('2d');
 
 var colors = [
-  '#7FDBFF', '#0074D9', '#01FF70', '#001F3F', '#39CCCC',
-  '#3D9970', '#2ECC40', '#FF4136', '#85144B', '#FF851B',
-  '#B10DC9', '#FFDC00', '#F012BE',
-];
+  '#632F27', '#C35A51', '#FF4700', '#FF794B', '#FFC945'
+]
+
+var landColors = [
+  '#a0e768',
+  '#b6e353',
+  '#837d4a',
+  '#a2fb75',
+  '#c7be60'
+]
 
 var levels = [
   { cityName: 'Ryazan', size: 20, lines: 2, soldiers: 8 },
@@ -38,6 +44,7 @@ var city;
 var round;
 var roundWon;
 var currentCityName;
+var bgColor = '#a0e768';
 var score;
 
 function start() {
@@ -48,12 +55,14 @@ function start() {
   score = 0;
   year = 1200;
   round = -1;
+  bgColor = '#a0e768';
   nextRound();
 }
 
 raf.start(function(elapsed) {
   // Clear the screen
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   if (state === 'title') {
     drawTitle(ctx);
@@ -181,10 +190,19 @@ raf.start(function(elapsed) {
 
     // Render the ball
     ctx.beginPath();
+    ctx.arc(supplyLine.x, supplyLine.y, supplyLine.radius + 5, 0, Math.PI * 2, true);
+    ctx.closePath();
+    ctx.fillStyle = '#000';
+    ctx.fill();
+    ctx.beginPath();
     ctx.arc(supplyLine.x, supplyLine.y, supplyLine.radius, 0, Math.PI * 2, true);
     ctx.closePath();
-    ctx.fillStyle = supplyLine.color;
+    ctx.fillStyle = bgColor;
     ctx.fill();
+
+    ctx.fillStyle = '#000000';
+    ctx.font = "24px Georgia";
+    ctx.fillText("♟︎", supplyLine.x, supplyLine.y + 8);
   };
 
   
@@ -227,8 +245,9 @@ raf.start(function(elapsed) {
 
   soldier.x += soldier.dx * elapsed;
   soldier.y += soldier.dy * elapsed;
-  ctx.fillStyle = soldier.color;
-  ctx.fillRect(soldier.x - soldier.radius, soldier.y - soldier.radius, soldier.radius * 2, soldier.radius * 2);
+  ctx.fillStyle = '#000000';
+  ctx.font = "24px Georgia";
+  ctx.fillText("♞", soldier.x - soldier.radius, soldier.y - soldier.radius);
 });
 
 for (var i = 0; i < balls.length; i++) {
@@ -250,16 +269,19 @@ if (supplyLinesCount > 0) {
   ctx.beginPath();
   ctx.arc(city.x, city.y, city.radius + 5, 0, Math.PI * 2, true);
   ctx.closePath();
-  ctx.fillStyle = '#ff00ff';
+  ctx.fillStyle = '#000000';
   ctx.fill();
 }
 
   ctx.beginPath();
   ctx.arc(city.x, city.y, city.radius, 0, Math.PI * 2, true);
   ctx.closePath();
-  ctx.fillStyle = '#0000ff';
+  ctx.fillStyle = supplyLinesCount > 0 ? bgColor : '#000000';
   ctx.fill();
 
+  ctx.fillStyle = supplyLinesCount > 0 ? '#000000' : bgColor;
+  ctx.font = "24px Georgia";
+  ctx.fillText("♜", city.x, city.y + 8);
 
   ctx.fillStyle = '#000000';
   ctx.font = "24px Georgia";
@@ -313,8 +335,8 @@ function drawTitle (ctx) {
   ctx.fillText("The First Horde", 10, 60);
   ctx.font = "32px Georgia";
   ctx.fillText("Use the cursor keys to guide your horde.", 10, 120);
-  ctx.fillText("Avoid the Rus army (red squares) if possible.", 10, 160);
-  ctx.fillText("Destroy the supply lines (green circles) to weaken the", 10, 200);
+  ctx.fillText("Avoid the Rus army (♞) if possible.", 10, 160);
+  ctx.fillText("Destroy the supply lines (♟︎) to weaken the", 10, 200);
   ctx.fillText("defenses of the cities.", 10, 240);
   ctx.fillText("Raid the cities to win.", 10, 320);
   ctx.fillText("An entry for js13k 2023 by slashie and stoltverd", 10, 400);
@@ -339,6 +361,8 @@ function nextRound () {
     color: rand.pick(colors),
     cooldown: Math.random()
   });
+
+  bgColor = rand.pick(landColors);
 
   for (var i = 0; i < 49; i++) {
     balls.push({
