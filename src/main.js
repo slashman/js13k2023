@@ -250,7 +250,7 @@ raf.start(function(elapsed) {
      && Math.abs(ball.y - soldier.y) <= soldier.radius * 2 && Math.random() > 0.7) {
       ball.radius -= 0.1;
       if (state === 'running') {
-        hordeStrength -= 0.2;
+        hordeStrength -= 0.1;
       }
       if (hordeStrength <= 0) {
         hordeStrength = 0;
