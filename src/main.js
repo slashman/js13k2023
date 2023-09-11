@@ -264,9 +264,17 @@ raf.start(function(elapsed) {
 
   soldier.x += soldier.dx * elapsed;
   soldier.y += soldier.dy * elapsed;
+
+  ctx.beginPath();
+  ctx.arc(soldier.x, soldier.y, soldier.radius, 0, Math.PI * 2, true);
+  ctx.closePath();
+  ctx.fillStyle = '#be913c';
+  ctx.fill();
+  
   ctx.fillStyle = '#000000';
+  ctx.textAlign = 'center';
   ctx.font = "24px Georgia";
-  ctx.fillText("♞", soldier.x - soldier.radius, soldier.y - soldier.radius);
+  ctx.fillText("♞", soldier.x, soldier.y + 8);
 });
 
 for (var i = 0; i < balls.length; i++) {
