@@ -279,11 +279,11 @@ raf.start(function(elapsed) {
       ball.radius -= damage;
       if (state === 'running') {
         hordeStrength -= damage;
-      }
-      if (hordeStrength <= 0) {
-        hordeStrength = 0;
-        gameOver('The horde disbands')
-        playSound(2);
+        if (hordeStrength <= 0) {
+          hordeStrength = 0;
+          gameOver('The horde disbands')
+          playSound(2);
+        }
       }
     };
   }
