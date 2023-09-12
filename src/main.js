@@ -474,8 +474,9 @@ function drawTitle (ctx) {
   ctx.fillText("Destroy the supply lines (🌾) to weaken the", 10, 200);
   ctx.fillText("defenses of the cities.", 10, 240);
   ctx.fillText("Raid the cities to win.", 10, 320);
-  ctx.fillText("An entry for js13k 2023 by slashie and stoltverd", 10, 400);
-  ctx.fillText("Press [Enter] to start", 10, 480);
+  ctx.fillText("An entry for js13k 2023 by slashie and stoltverd.", 10, 400);
+  ctx.fillText("Music and sound effects by quietgecko.", 10, 440);
+  ctx.fillText("Press [Enter] to start", 10, 520);
 }
 
 function drawLoading (ctx) {
