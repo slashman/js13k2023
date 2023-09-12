@@ -315,10 +315,10 @@ for (var i = 0; i < balls.length; i++) {
     Math.abs(ball.y - city.y) <= city.radius * 2 && Math.random() > 0.9
   ) {
     var damage = 0.1 + upgradeState.attack * 0.02;
-    city.radius -= damage;
+    city.radius -= damage / 2;
   }
 }
-if (city.radius < 3 && state === 'running') {
+if (city.radius < 6 && state === 'running') {
   roundWon = true;
   score += Math.floor(hordeStrength);
   playSound(6);
