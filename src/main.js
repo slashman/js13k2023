@@ -319,10 +319,14 @@ for (var i = 0; i < balls.length; i++) {
   }
 }
 if (city.radius < 6 && state === 'running') {
-  roundWon = true;
   score += Math.floor(hordeStrength);
   playSound(6);
-  gameOver('You have invaded ' + currentCityName + '!');
+  if (round === levels.length - 1) {
+    gameOver('Congratulations, you conquered Rus!');
+  } else {
+    roundWon = true;
+    gameOver('You have invaded ' + currentCityName + '!');
+  }
 }
 
 if (supplyLinesCount > 0) {
@@ -421,11 +425,12 @@ input.typed('Enter', function () {
     if (musicLoaded) {
       start();
     }
-  }
-  // test
-  /*roundWon = true;
-  playSound(6);
-  gameOver('You have invaded ' + currentCityName + '!');*/
+  }/* else {
+    // test
+    roundWon = true;
+    playSound(6);
+    gameOver('You have invaded ' + currentCityName + '!');
+  }*/
 });
 
 input.typed('1', function () {
