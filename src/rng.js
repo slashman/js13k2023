@@ -15,6 +15,9 @@ module.exports = function(seed) {
     int: function(max) {
       return random() * (max || 0xfffffff) | 0;
     },
+    intN: function(max) {
+      return Math.random() * max | 0;
+    },
     /**
      * Return a float within [0.0, 1.0).
      *
@@ -53,6 +56,9 @@ module.exports = function(seed) {
      */
     pick: function(source) {
       return source[rng.range(0, source.length)];
+    },
+    pickN: function(source) {
+      return source[rng.intN(source.length)];
     }
   };
 

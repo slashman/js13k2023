@@ -28,7 +28,18 @@ var levels = [
   { cityName: 'Kiev', size: 30, lines: 2, soldiers: 10, forests: 10 }
 ];
 
-var hordeSpeed = 100;
+var upgrades = {
+  // Increases defense
+  armor: ['Padded Armor', 'Leather Armor', 'Scale Armor', 'Chain Armor'],
+  // Increases attack
+  attack: ['Fletching', 'Bodkin Arrow', 'Iron Casting', 'Blast Furnace'],
+  // Increases horde size
+  hordeSize: ['Chieftain', 'Mangudai', 'Steepes Lord', 'Great Khan'],
+  // Increases speed (horse quality)
+  speed: ['Husbandry 1', 'Husbandry 2', 'Husbandry 3', 'Husbandry 4'],
+}
+
+var baseHordeSpeed = 80;
 
 var state;
 var gameOverMessage;
@@ -47,6 +58,7 @@ var roundWon;
 var currentCityName;
 var bgColor = '#a0e768';
 var score;
+var upgradeState;
 
 function start() {
   state = 'running';
@@ -57,6 +69,12 @@ function start() {
   year = 1200;
   round = -1;
   bgColor = '#a0e768';
+  upgradeState = {
+    armor: 0,
+    attack: 0,
+    hordeSize: 0,
+    speed: 0
+  };
   nextRound();
 }
 
@@ -83,6 +101,8 @@ raf.start(function(elapsed) {
     ctx.fillStyle = forest.color;
     ctx.fill();
   });
+
+  var hordeSpeed = baseHordeSpeed + upgradeState.speed * 10;
 
   for (var j = 0; j < balls.length; j++) {
     var ball = balls[j];
@@ -175,8 +195,8 @@ raf.start(function(elapsed) {
     if (supplyLine.cooldown < 0) {
       // Change direction
       var angle = Math.random() * Math.PI * 2;
-      supplyLine.dx = hordeSpeed * Math.cos(angle) * 0.1;
-      supplyLine.dy = hordeSpeed * Math.sin(angle) * 0.1;
+      supplyLine.dx = baseHordeSpeed * Math.cos(angle) * 0.1;
+      supplyLine.dy = baseHordeSpeed * Math.sin(angle) * 0.1;
       var rando = Math.random();
       supplyLine.dx = supplyLine.dx * (1 + rando * 0.3);
       supplyLine.dy = supplyLine.dy * (1 + rando * 0.3);
@@ -189,7 +209,9 @@ raf.start(function(elapsed) {
       var ball = balls[i];
       if (Math.abs(ball.x - supplyLine.x) <= supplyLine.radius * 2
        && Math.abs(ball.y - supplyLine.y) <= supplyLine.radius * 2 && Math.random() > 0.7) {
-        supplyLine.radius -= 0.1;
+        // Damage
+        var damage = 0.1 + upgradeState.attack * 0.02;
+        supplyLine.radius -= damage;
       };
     }
     if (supplyLine.radius < 3) {
@@ -234,8 +256,8 @@ raf.start(function(elapsed) {
       } else {
         angle = Math.random() * Math.PI * 2;
       }
-      soldier.dx = hordeSpeed * Math.cos(angle) * 0.2;
-      soldier.dy = hordeSpeed * Math.sin(angle) * 0.2;
+      soldier.dx = baseHordeSpeed * Math.cos(angle) * 0.2;
+      soldier.dy = baseHordeSpeed * Math.sin(angle) * 0.2;
       var rando = Math.random();
       soldier.dx = soldier.dx * (1 + rando * 0.3);
       soldier.dy = soldier.dy * (1 + rando * 0.3);
@@ -248,9 +270,10 @@ raf.start(function(elapsed) {
     var ball = balls[i];
     if (Math.abs(ball.x - soldier.x) <= soldier.radius * 2
      && Math.abs(ball.y - soldier.y) <= soldier.radius * 2 && Math.random() > 0.7) {
-      ball.radius -= 0.1;
+      var damage = 0.2 - upgradeState.armor * 0.03;
+      ball.radius -= damage;
       if (state === 'running') {
-        hordeStrength -= 0.1;
+        hordeStrength -= damage;
       }
       if (hordeStrength <= 0) {
         hordeStrength = 0;
@@ -281,9 +304,10 @@ for (var i = 0; i < balls.length; i++) {
   var ball = balls[i];
   if (supplyLinesCount === 0 &&
     Math.abs(ball.x - city.x) <= city.radius * 2 &&
-    Math.abs(ball.y - city.y) <= city.radius * 2 && Math.random() > 0.7
+    Math.abs(ball.y - city.y) <= city.radius * 2 && Math.random() > 0.9
   ) {
-    city.radius -= 0.1;
+    var damage = 0.1 + upgradeState.attack * 0.02;
+    city.radius -= damage;
   }
 }
 if (city.radius < 3 && state === 'running') {
@@ -322,20 +346,50 @@ if (supplyLinesCount > 0) {
   ctx.fillText("Score: " + (score), 780, 580);
   ctx.textAlign = 'center';
   ctx.fillText("Year " + Math.floor(year), canvas.width / 2, 580);
+  ctx.font = "16px Georgia";
+  ctx.fillText(currentCityName, canvas.width / 2, canvas.height * 0.25 + 50);
+  ctx.font = "24px Georgia";
   if (state === 'gameOver') {
     ctx.fillText(gameOverMessage, canvas.width / 2, 40);
     if (roundWon) {
-      ctx.fillText('Press [Enter to raid on]', canvas.width / 2, 90);
+      if (upgradeState.armor + upgradeState.attack + upgradeState.hordeSize + upgradeState.speed === 16) {
+        ctx.fillText('Press [Enter to raid on]', canvas.width / 2, 90);
+      } else {
+        ctx.fillStyle = bgColor;
+        ctx.fillRect(canvas.width / 2 - 200, 0, 400, 90 + 50 * 6);
+        ctx.fillStyle = '#000000';
+        ctx.fillText(gameOverMessage, canvas.width / 2, 40);
+        ctx.fillText('Select a technology to assimilate', canvas.width / 2, 90);
+        if (upgradeState.armor < 4) {
+          ctx.fillText('1. Armor: ' + upgrades.armor[upgradeState.armor], canvas.width / 2, 90 + 50);
+          ebi('touchUp', upgrades.armor[upgradeState.armor]);
+        } else {
+          ebi('touchUp', '-');
+        }
+        if (upgradeState.attack < 4) {
+          ctx.fillText('2. Weapons: ' + upgrades.attack[upgradeState.attack], canvas.width / 2, 90 + 50 * 2);
+          ebi('touchLeft', upgrades.attack[upgradeState.attack]);
+        } else {
+          ebi('touchLeft', '-');
+        }
+        if (upgradeState.hordeSize < 4) {
+          ctx.fillText('3. Leadership: ' + upgrades.hordeSize[upgradeState.hordeSize], canvas.width / 2, 90 + 50 * 3);
+          ebi('touchRight', upgrades.hordeSize[upgradeState.hordeSize]);
+        } else {
+          ebi('touchRight', '-');
+        }
+        if (upgradeState.speed < 4) {
+          ctx.fillText('4. Horses: ' + upgrades.speed[upgradeState.speed], canvas.width / 2, 90 + 50 * 4);
+          ebi('touchDown', upgrades.speed[upgradeState.speed]);
+        } else {
+          ebi('touchDown', '-');
+        }
+      }
     } else {
       ctx.fillText('Press [Enter to restart]', canvas.width / 2, 90);
     }
   }
-  ctx.font = "16px Georgia";
-  ctx.textAlign = 'center';
-  ctx.fillText(currentCityName, canvas.width / 2, canvas.height * 0.25 + 50);
-  
 });
-
 
 function gameOver (message) {
   if (state === 'gameOver') {
@@ -348,12 +402,38 @@ function gameOver (message) {
 input.typed('Enter', function () {
   if (state === 'gameOver') {
     if (roundWon) {
-      nextRound();
+      if (upgradeState.armor + upgradeState.attack + upgradeState.hordeSize + upgradeState.speed === 16) {
+        nextRound(false);
+      }
     } else {
       state = 'title';
     }
   } else if (state === 'title') {
     start();
+  }
+});
+
+input.typed('1', function () {
+  if (state === 'gameOver' && roundWon && upgradeState.armor < 4) {
+   nextRound('armor');
+  }
+});
+
+input.typed('2', function () {
+  if (state === 'gameOver' && roundWon && upgradeState.attack < 4) {
+   nextRound('attack');
+  }
+});
+
+input.typed('3', function () {
+  if (state === 'gameOver' && roundWon && upgradeState.hordeSize < 4) {
+   nextRound('hordeSize');
+  }
+});
+
+input.typed('4', function () {
+  if (state === 'gameOver' && roundWon && upgradeState.speed < 4) {
+   nextRound('speed');
   }
 });
 
@@ -372,7 +452,13 @@ function drawTitle (ctx) {
   ctx.fillText("Press [Enter] to start", 10, 480);
 }
 
-function nextRound () {
+function nextRound (upgrade) {
+  rvkm();
+  if (upgrade) {
+    upgradeState[upgrade]++;
+  }
+
+  var hordeSpeed = baseHordeSpeed + upgradeState.speed * 10;
   roundWon = false;
   round++;
   var levelData = levels[round];
@@ -382,16 +468,16 @@ function nextRound () {
   soldiers = [];
   forests = [];
 
-  bgColor = rand.pick(landColors);
+  bgColor = landColors[round % landColors.length];
 
-  for (var i = 0; i < 49; i++) {
+  for (var i = 0; i < 49 + upgradeState.hordeSize * 5; i++) {
     balls.push({
-      x: canvas.width * 0.75 + rand.int(canvas.width),
-      y: canvas.height / 2  + rand.int(canvas.height / 2),
+      x: canvas.width * 0.75 + rand.intN(canvas.width),
+      y: canvas.height / 2  + rand.intN(canvas.height / 2),
       radius: 10,
       dx: 0,
       dy: 0,
-      color: rand.pick(colors),
+      color: rand.pickN(colors),
       cooldown: -1
     });
   }
@@ -402,7 +488,7 @@ function nextRound () {
     radius: 15,
     dx: 0,
     dy: 0,
-    color: rand.pick(colors),
+    color: colors[1],
     cooldown: Math.random()
   });
 
@@ -413,8 +499,8 @@ function nextRound () {
       x: rand.int(canvas.width),
       y: rand.int(canvas.height / 2),
       radius: 20,
-      dx: Math.random() * hordeSpeed / 2,
-      dy: Math.random() * hordeSpeed / 2,
+      dx: Math.random() * baseHordeSpeed / 2,
+      dy: Math.random() * baseHordeSpeed / 2,
       color: '#00FF00',
       cooldown: Math.random()
     });
@@ -439,8 +525,8 @@ function nextRound () {
       x: rand.int(canvas.width),
       y: rand.int(canvas.height / 2),
       radius: 15,
-      dx: Math.random() * hordeSpeed / 2,
-      dy: Math.random() * hordeSpeed / 2,
+      dx: Math.random() * baseHordeSpeed / 2,
+      dy: Math.random() * baseHordeSpeed / 2,
       color: '#FF0000',
       cooldown: Math.random()
     });
@@ -482,7 +568,7 @@ state = 'title';
     }
     canvas.style.width = iw + 'px';
     canvas.style.height = ih + 'px';
-    if (iw > ih * rat) {
+    if (window.innerWidth > window.innerHeight) {
       document.getElementById('touchControls').style.display = 'none';
     } else {
       document.getElementById('touchControls').style.display = 'block';
@@ -495,3 +581,12 @@ state = 'title';
   
   resizeCanvas();
 })();
+
+function rvkm() {
+  ebi('touchUp', 'Up');
+  ebi('touchLeft', 'Left');
+  ebi('touchRight', 'Right');
+  ebi('touchDown', 'Down');
+}
+
+function ebi(i, t) { document.getElementById(i).innerHTML = t }
