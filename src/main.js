@@ -12,20 +12,19 @@ var colors = [
 var landColors = [
   '#a0e768',
   '#b6e353',
-  '#837d4a',
   '#a2fb75',
   '#c7be60'
 ]
 
 var levels = [
-  { cityName: 'Ryazan', size: 20, lines: 2, soldiers: 9, forests: 6 },
-  { cityName: 'Kolomna', size: 25, lines: 3, soldiers: 8, forests: 4 },
-  { cityName: 'Moscow', size: 10, lines: 3, soldiers: 15, forests: 8 },
-  { cityName: 'Vladimir', size: 30, lines: 4, soldiers: 10, forests: 7},
-  { cityName: 'Suzdal', size: 10, lines: 3, soldiers: 15, forests: 10 },
-  { cityName: 'Tver', size: 20, lines: 3, soldiers: 15, forests: 6 },
-  { cityName: 'Kostroma', size: 60, lines: 3, soldiers: 10, forests: 8 },
-  { cityName: 'Kiev', size: 30, lines: 2, soldiers: 10, forests: 10 }
+  { cityName: 'Ryazan', size: 20, lines: 2, soldiers: 7, forests: 5, seed: 1 },
+  { cityName: 'Kolomna', size: 25, lines: 2, soldiers: 10, forests: 6, seed: 10 },
+  { cityName: 'Moscow', size: 10, lines: 3, soldiers: 12, forests: 8, seed: 4 },
+  { cityName: 'Vladimir', size: 30, lines: 4, soldiers: 10, forests: 7, seed: 5},
+  { cityName: 'Suzdal', size: 10, lines: 3, soldiers: 15, forests: 10, seed: 6 },
+  { cityName: 'Tver', size: 20, lines: 4, soldiers: 15, forests: 12, seed: 7 },
+  { cityName: 'Kostroma', size: 40, lines: 4, soldiers: 10, forests: 8, seed: 8 },
+  { cityName: 'Kiev', size: 30, lines: 5, soldiers: 15, forests: 10, seed: 9 }
 ];
 
 var upgrades = {
@@ -63,7 +62,6 @@ var upgradeState;
 function start() {
   state = 'running';
   gameOverMessage = '';
-  rand = rng(1);
   hordeStrength = 0;
   score = 0;
   year = 1200;
@@ -418,6 +416,10 @@ input.typed('Enter', function () {
   } else if (state === 'title') {
     start();
   }
+  // test
+  /*roundWon = true;
+  playSound(6);
+  gameOver('You have invaded ' + currentCityName + '!');*/
 });
 
 input.typed('1', function () {
@@ -470,6 +472,7 @@ function nextRound (upgrade) {
   round++;
   var levelData = levels[round];
   supplyLinesCount = levelData.lines;
+  rand = rng(levelData.seed);
   balls = [];
   supplyLines = [];
   soldiers = [];
