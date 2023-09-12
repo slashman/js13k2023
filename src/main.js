@@ -92,7 +92,7 @@ raf.start(function(elapsed) {
   }
 
   if (state === 'running') {
-    year += (elapsed * 0.4);
+    year += (elapsed * 0.2);
     if (year > 1299) {
       gameOver('The XIII century is over.');
     }
