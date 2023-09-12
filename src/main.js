@@ -191,7 +191,7 @@ raf.start(function(elapsed) {
     if (ball === mainBall) {
       ctx.fillStyle = '#000000';
       ctx.font = "24px Georgia";
-      ctx.fillText("♠", ball.x, ball.y + 8);
+      ctx.fillText("🐎", ball.x, ball.y + 8);
     }
   }
 
@@ -250,7 +250,7 @@ raf.start(function(elapsed) {
 
     ctx.fillStyle = '#000000';
     ctx.font = "24px Georgia";
-    ctx.fillText("♟︎", supplyLine.x, supplyLine.y + 8);
+    ctx.fillText("🌾", supplyLine.x, supplyLine.y + 8);
   };
 
   
@@ -305,7 +305,7 @@ raf.start(function(elapsed) {
   ctx.fillStyle = '#000000';
   ctx.textAlign = 'center';
   ctx.font = "24px Georgia";
-  ctx.fillText("♞", soldier.x, soldier.y + 8);
+  ctx.fillText("⚔️", soldier.x, soldier.y + 8);
 });
 
 for (var i = 0; i < balls.length; i++) {
@@ -459,8 +459,8 @@ function drawTitle (ctx) {
   ctx.fillText("The First Horde", 10, 60);
   ctx.font = "32px Georgia";
   ctx.fillText("Use the cursor keys to guide your horde.", 10, 120);
-  ctx.fillText("Avoid the Rus army (♞) if possible.", 10, 160);
-  ctx.fillText("Destroy the supply lines (♟︎) to weaken the", 10, 200);
+  ctx.fillText("Avoid the Rus armies (⚔️) if possible.", 10, 160);
+  ctx.fillText("Destroy the supply lines (🌾) to weaken the", 10, 200);
   ctx.fillText("defenses of the cities.", 10, 240);
   ctx.fillText("Raid the cities to win.", 10, 320);
   ctx.fillText("An entry for js13k 2023 by slashie and stoltverd", 10, 400);
