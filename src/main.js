@@ -17,7 +17,7 @@ var landColors = [
 ]
 
 var levels = [
-  { cityName: 'Ryazan', size: 20, lines: 2, soldiers: 7, forests: 5, seed: 1 },
+  { cityName: 'Ryazan', size: 20, lines: 2, soldiers: 7, forests: 5, seed: 12 },
   { cityName: 'Kolomna', size: 25, lines: 2, soldiers: 10, forests: 6, seed: 10 },
   { cityName: 'Moscow', size: 10, lines: 3, soldiers: 12, forests: 8, seed: 4 },
   { cityName: 'Vladimir', size: 30, lines: 4, soldiers: 10, forests: 7, seed: 5},
