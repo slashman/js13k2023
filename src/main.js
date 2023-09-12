@@ -172,12 +172,12 @@ raf.start(function(elapsed) {
     if (ball.radius <= 3) {
       if (state === 'running') {
         hordeStrength -= ball.radius;
-      }
-      balls.splice(j, 1);
-      j--;
-      if (ball === mainBall) {
-        playSound(2);
-        gameOver('The Khan is dead.');
+        balls.splice(j, 1);
+        j--;
+        if (ball === mainBall) {
+          playSound(2);
+          gameOver('The Khan is dead.');
+        }
       }
       continue;
     }
@@ -210,22 +210,24 @@ raf.start(function(elapsed) {
       supplyLine.cooldown -= elapsed;
     }
 
-    for (var i = 0; i < balls.length; i++) {
-      var ball = balls[i];
-      if (Math.abs(ball.x - supplyLine.x) <= supplyLine.radius * 2
-       && Math.abs(ball.y - supplyLine.y) <= supplyLine.radius * 2 && Math.random() > 0.7) {
-        // Damage
-        var damage = 0.1 + upgradeState.attack * 0.02;
-        supplyLine.radius -= damage;
-        playSound(5);
-      };
-    }
-    if (supplyLine.radius < 3) {
-      supplyLinesCount--;
-      supplyLines.splice(j, 1);
-      j--;
-      playSound(3);
-      continue;
+    if (state === 'running') {
+      for (var i = 0; i < balls.length; i++) {
+        var ball = balls[i];
+        if (Math.abs(ball.x - supplyLine.x) <= supplyLine.radius * 2
+        && Math.abs(ball.y - supplyLine.y) <= supplyLine.radius * 2 && Math.random() > 0.7) {
+          // Damage
+          var damage = 0.1 + upgradeState.attack * 0.02;
+          supplyLine.radius -= damage;
+          playSound(5);
+        };
+      }
+      if (supplyLine.radius < 3) {
+        supplyLinesCount--;
+        supplyLines.splice(j, 1);
+        j--;
+        playSound(3);
+        continue;
+      }
     }
 
     // Handle collision against the canvas's edges
@@ -273,13 +275,14 @@ raf.start(function(elapsed) {
     soldier.cooldown -= elapsed;
   }
 
-  for (var i = 0; i < balls.length; i++) {
-    var ball = balls[i];
-    if (Math.abs(ball.x - soldier.x) <= soldier.radius * 2
-     && Math.abs(ball.y - soldier.y) <= soldier.radius * 2 && Math.random() > 0.7) {
-      var damage = 0.2 - upgradeState.armor * 0.03;
-      ball.radius -= damage;
-      if (state === 'running') {
+  if (state === 'running') {
+    for (var i = 0; i < balls.length; i++) {
+      var ball = balls[i];
+      if (Math.abs(ball.x - soldier.x) <= soldier.radius * 2
+      && Math.abs(ball.y - soldier.y) <= soldier.radius * 2 && Math.random() > 0.7) {
+        var damage = 0.2 - upgradeState.armor * 0.03;
+        playSound(4);
+        ball.radius -= damage;
         hordeStrength -= damage;
         if (hordeStrength <= 0) {
           hordeStrength = 0;
@@ -287,7 +290,7 @@ raf.start(function(elapsed) {
           playSound(2);
         }
       }
-    };
+    }
   }
 
   if (soldier.x - soldier.radius < 0 && soldier.dx < 0 || soldier.x + soldier.radius > canvas.width && soldier.dx > 0) soldier.dx = -soldier.dx * 0.7;
@@ -308,24 +311,27 @@ raf.start(function(elapsed) {
   ctx.fillText("⚔️", soldier.x, soldier.y + 8);
 });
 
-for (var i = 0; i < balls.length; i++) {
-  var ball = balls[i];
-  if (supplyLinesCount === 0 &&
-    Math.abs(ball.x - city.x) <= city.radius * 2 &&
-    Math.abs(ball.y - city.y) <= city.radius * 2 && Math.random() > 0.9
-  ) {
-    var damage = 0.1 + upgradeState.attack * 0.02;
-    city.radius -= damage / 2;
+if (state === 'running') {
+  for (var i = 0; i < balls.length; i++) {
+    var ball = balls[i];
+    if (supplyLinesCount === 0 &&
+      Math.abs(ball.x - city.x) <= city.radius * 2 &&
+      Math.abs(ball.y - city.y) <= city.radius * 2 && Math.random() > 0.9
+    ) {
+      var damage = 0.1 + upgradeState.attack * 0.02;
+      city.radius -= damage / 2;
+      playSound(5);
+    }
   }
-}
-if (city.radius < 6 && state === 'running') {
-  score += Math.floor(hordeStrength);
-  playSound(6);
-  if (round === levels.length - 1) {
-    gameOver('Congratulations, you conquered Rus!');
-  } else {
-    roundWon = true;
-    gameOver('You have invaded ' + currentCityName + '!');
+  if (city.radius < 6) {
+    score += Math.floor(hordeStrength);
+    playSound(6);
+    if (round === levels.length - 1) {
+      gameOver('Congratulations, you conquered Rus!');
+    } else {
+      roundWon = true;
+      gameOver('You have invaded ' + currentCityName + '!');
+    }
   }
 }
 
