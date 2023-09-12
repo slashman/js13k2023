@@ -493,7 +493,9 @@ function nextRound (upgrade) {
 
   bgColor = landColors[round % landColors.length];
 
-  for (var i = 0; i < 49 + upgradeState.hordeSize * 5; i++) {
+  var bonusBalls = Math.floor(hordeStrength / 10);
+
+  for (var i = 0; i < 49 + upgradeState.hordeSize * 5 + bonusBalls; i++) {
     balls.push({
       x: canvas.width * 0.75 + rand.intN(canvas.width),
       y: canvas.height / 2  + rand.intN(canvas.height / 2),
