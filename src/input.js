@@ -21,10 +21,8 @@ module.exports = {
 }
 
 window.hordeGlobal = {};
-var typedBuffer;
-window.hordeGlobal.touch = function (key, k2) {
+window.hordeGlobal.touch = function (key) {
   pressed[key] = true;
-  typedBuffer = k2;
 }
 
 window.hordeGlobal.touchEnd = function() {
@@ -32,7 +30,6 @@ window.hordeGlobal.touchEnd = function() {
   pressed['ArrowDown'] = false;
   pressed['ArrowLeft'] = false;
   pressed['ArrowRight'] = false;
-  if (typedCallbacks[typedBuffer]) typedCallbacks[typedBuffer]() ;
 }
 
 window.hordeGlobal.touchEnter = function() {

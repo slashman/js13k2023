@@ -380,28 +380,28 @@ if (supplyLinesCount > 0) {
         ctx.fillText(gameOverMessage, canvas.width / 2, 40);
         ctx.fillText('Select a technology to assimilate', canvas.width / 2, 90);
         if (upgradeState.armor < 4) {
+          ctx.beginPath();
+          ctx.rect(canvas.width / 2 - 180, 90 + 25, 360, 40);
+          ctx.stroke();
           ctx.fillText('1. Armor: ' + upgrades.armor[upgradeState.armor], canvas.width / 2, 90 + 50);
-          ebi('touchUp', upgrades.armor[upgradeState.armor]);
-        } else {
-          ebi('touchUp', '-');
         }
         if (upgradeState.attack < 4) {
+          ctx.beginPath();
+          ctx.rect(canvas.width / 2 - 180, 90 + 25 + 50, 360, 40);
+          ctx.stroke();
           ctx.fillText('2. Weapons: ' + upgrades.attack[upgradeState.attack], canvas.width / 2, 90 + 50 * 2);
-          ebi('touchLeft', upgrades.attack[upgradeState.attack]);
-        } else {
-          ebi('touchLeft', '-');
         }
         if (upgradeState.hordeSize < 4) {
+          ctx.beginPath();
+          ctx.rect(canvas.width / 2 - 180, 90 + 25 + 100, 360, 40);
+          ctx.stroke();
           ctx.fillText('3. Leadership: ' + upgrades.hordeSize[upgradeState.hordeSize], canvas.width / 2, 90 + 50 * 3);
-          ebi('touchRight', upgrades.hordeSize[upgradeState.hordeSize]);
-        } else {
-          ebi('touchRight', '-');
         }
         if (upgradeState.speed < 4) {
+          ctx.beginPath();
+          ctx.rect(canvas.width / 2 - 180, 90 + 25 + 150, 360, 40);
+          ctx.stroke();
           ctx.fillText('4. Horses: ' + upgrades.speed[upgradeState.speed], canvas.width / 2, 90 + 50 * 4);
-          ebi('touchDown', upgrades.speed[upgradeState.speed]);
-        } else {
-          ebi('touchDown', '-');
         }
       }
     } else {
@@ -419,6 +419,10 @@ function gameOver (message) {
 }
 
 input.typed('Enter', function () {
+  doEnterKey();
+});
+
+function doEnterKey () {
   if (state === 'gameOver') {
     if (roundWon) {
       if (upgradeState.armor + upgradeState.attack + upgradeState.hordeSize + upgradeState.speed === 16) {
@@ -437,7 +441,7 @@ input.typed('Enter', function () {
     playSound(6);
     gameOver('You have invaded ' + currentCityName + '!');
   }*/
-});
+}
 
 input.typed('1', function () {
   if (state === 'gameOver' && roundWon && upgradeState.armor < 4) {
@@ -469,7 +473,7 @@ function drawTitle (ctx) {
   ctx.textAlign = 'left';
   ctx.fillText("The First Horde", 10, 60);
   ctx.font = "32px Georgia";
-  ctx.fillText("Use the cursor keys to guide your horde.", 10, 120);
+  ctx.fillText("Use the cursor keys or swipe to guide your horde.", 10, 120);
   ctx.fillText("Avoid the Rus armies (⚔️) if possible.", 10, 160);
   ctx.fillText("Destroy the supply lines (🌾) to weaken the", 10, 200);
   ctx.fillText("defenses of the cities.", 10, 240);
@@ -487,7 +491,6 @@ function drawLoading (ctx) {
 }
 
 function nextRound (upgrade) {
-  rvkm();
   if (upgrade) {
     upgradeState[upgrade]++;
   }
@@ -586,6 +589,8 @@ function nextRound (upgrade) {
 
 state = 'title';
 
+var theScale;
+
 (function() {
   window.addEventListener('resize', resizeCanvas, false);
   function resizeCanvas() {
@@ -605,6 +610,8 @@ state = 'title';
     }
     canvas.style.width = iw + 'px';
     canvas.style.height = ih + 'px';
+
+    theScale = iw / canvas.width;
     if (window.innerWidth > window.innerHeight) {
       document.getElementById('touchControls').style.display = 'none';
     } else {
@@ -618,17 +625,6 @@ state = 'title';
   
   resizeCanvas();
 })();
-
-function rvkm() {
-  ebi('touchUp', 'Up');
-  ebi('touchLeft', 'Left');
-  ebi('touchRight', 'Right');
-  ebi('touchDown', 'Down');
-}
-
-function ebi(i, t) { document.getElementById(i).innerHTML = t }
-
-
 
 //! ZzFXM (v2.0.3) | (C) Keith Clark | MIT | https://github.com/keithclark/ZzFXM
 zzfxM=(n,f,t,e=125)=>{let l,o,z,r,g,h,x,a,u,c,d,i,m,p,G,M=0,R=[],b=[],j=[],k=0,q=0,s=1,v={},w=zzfxR/e*60>>2;for(;s;k++)R=[s=a=d=m=0],t.map((e,d)=>{for(x=f[e][k]||[0,0,0],s|=!!f[e][k],G=m+(f[e][0].length-2-!a)*w,p=d==t.length-1,o=2,r=m;o<x.length+p;a=++o){for(g=x[o],u=o==x.length+p-1&&p||c!=(x[0]||0)|g|0,z=0;z<w&&a;z++>w-99&&u?i+=(i<1)/99:0)h=(1-i)*R[M++]/2||0,b[r]=(b[r]||0)-h*q+h,j[r]=(j[r++]||0)+h*q+h;g&&(i=g%1,q=x[1]||0,(g|=0)&&(R=v[[c=x[M=0]||0,g]]=v[[c,g]]||(l=[...n[c]],l[2]*=2**((g-12)/12),g>0?zzfxG(...l):[])))}m=G});return[b,j]}
@@ -683,3 +679,27 @@ setTimeout(() => {
     musicBuffers = musics.map(m => zzfxM(...m))
     musicLoaded = true;
 }, 50);
+
+var el = document.getElementById('game')
+el.addEventListener('pointerdown', function(e){
+  var x = (e.clientX - e.target.offsetLeft) / theScale;
+  var y = (e.clientY - e.target.offsetTop) / theScale;
+  if (state === 'gameOver' && roundWon) {
+    if (into(x, y, canvas.width / 2 - 180, 90 + 25, 360, 40)) {
+      if (upgradeState.armor < 4) { nextRound('armor'); }
+    } else if (into(x, y, canvas.width / 2 - 180, 90 + 25 + 50, 360, 40)) {
+      if (upgradeState.attack < 4) { nextRound('attack'); }
+    } else if (into(x, y, canvas.width / 2 - 180, 90 + 25 + 100, 360, 40)) {
+      if (upgradeState.hordeSize < 4) { nextRound('hordeSize'); }
+    } else if (into(x, y, canvas.width / 2 - 180, 90 + 25 + 150, 360, 40)) {
+      if (upgradeState.speed < 4) { nextRound('speed'); }
+    }
+  } else {
+    // Act as enter
+    doEnterKey();
+  }
+});
+
+function into (x, y, xa, ya, w, h) {
+  return x > xa && x < xa + w && y > ya && y < ya + h;
+}
