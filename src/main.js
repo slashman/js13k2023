@@ -83,7 +83,11 @@ raf.start(function(elapsed) {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   if (state === 'title') {
-    drawTitle(ctx);
+    if (!musicLoaded) {
+      drawLoading(ctx);
+    } else {
+      drawTitle(ctx);
+    }
     return;
   }
 
@@ -414,7 +418,9 @@ input.typed('Enter', function () {
       state = 'title';
     }
   } else if (state === 'title') {
-    start();
+    if (musicLoaded) {
+      start();
+    }
   }
   // test
   /*roundWon = true;
@@ -459,6 +465,13 @@ function drawTitle (ctx) {
   ctx.fillText("Raid the cities to win.", 10, 320);
   ctx.fillText("An entry for js13k 2023 by slashie and stoltverd", 10, 400);
   ctx.fillText("Press [Enter] to start", 10, 480);
+}
+
+function drawLoading (ctx) {
+  ctx.fillStyle = '#000000';
+  ctx.textAlign = 'left';
+  ctx.font = "32px Georgia";
+  ctx.fillText("Loading music...", 10, 120);
 }
 
 function nextRound (upgrade) {
