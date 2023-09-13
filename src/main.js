@@ -378,30 +378,39 @@ if (supplyLinesCount > 0) {
         ctx.fillRect(canvas.width / 2 - 200, 0, 400, 90 + 50 * 6);
         ctx.fillStyle = '#000000';
         ctx.fillText(gameOverMessage, canvas.width / 2, 40);
-        ctx.fillText('Select a technology to assimilate', canvas.width / 2, 90);
+        ctx.fillText('Select an improvement', canvas.width / 2, 90);
+        ctx.font = "18px Georgia";
+        var row = 0;
         if (upgradeState.armor < 4) {
           ctx.beginPath();
-          ctx.rect(canvas.width / 2 - 180, 90 + 25, 360, 40);
+          ctx.rect(canvas.width / 2 - 180, 115 + 70 * row, 360, 60);
           ctx.stroke();
-          ctx.fillText('1. Armor: ' + upgrades.armor[upgradeState.armor], canvas.width / 2, 90 + 50);
+          ctx.fillText('1. Armor: ' + upgrades.armor[upgradeState.armor], canvas.width / 2, 135 + 70 * row);
+          ctx.fillText('+3 Skirmish Defense', canvas.width / 2, 160 + 70 * row);
         }
+        row++;
         if (upgradeState.attack < 4) {
           ctx.beginPath();
-          ctx.rect(canvas.width / 2 - 180, 90 + 25 + 50, 360, 40);
+          ctx.rect(canvas.width / 2 - 180, 115 + 70 * row, 360, 60);
           ctx.stroke();
-          ctx.fillText('2. Weapons: ' + upgrades.attack[upgradeState.attack], canvas.width / 2, 90 + 50 * 2);
+          ctx.fillText('2. Weapons: ' + upgrades.attack[upgradeState.attack], canvas.width / 2, 135 + 70 * row);
+          ctx.fillText('+2 Raid Attack', canvas.width / 2, 160 + 70 * row);
         }
+        row++;
         if (upgradeState.hordeSize < 4) {
           ctx.beginPath();
-          ctx.rect(canvas.width / 2 - 180, 90 + 25 + 100, 360, 40);
+          ctx.rect(canvas.width / 2 - 180, 115 + 70 * row, 360, 60);
           ctx.stroke();
-          ctx.fillText('3. Leadership: ' + upgrades.hordeSize[upgradeState.hordeSize], canvas.width / 2, 90 + 50 * 3);
+          ctx.fillText('3. Leadership: ' + upgrades.hordeSize[upgradeState.hordeSize], canvas.width / 2, 135 + 70 * row);
+          ctx.fillText('+5 horde units on each new round', canvas.width / 2, 160 + 70 * row);
         }
+        row++;
         if (upgradeState.speed < 4) {
           ctx.beginPath();
-          ctx.rect(canvas.width / 2 - 180, 90 + 25 + 150, 360, 40);
+          ctx.rect(canvas.width / 2 - 180, 115 + 70 * row, 360, 60);
           ctx.stroke();
-          ctx.fillText('4. Horses: ' + upgrades.speed[upgradeState.speed], canvas.width / 2, 90 + 50 * 4);
+          ctx.fillText('4. Horse Training: ' + upgrades.speed[upgradeState.speed], canvas.width / 2, 135 + 70 * row);
+          ctx.fillText('+10 horde speed', canvas.width / 2, 160 + 70 * row);
         }
       }
     } else {
@@ -685,13 +694,13 @@ el.addEventListener('pointerdown', function(e){
   var x = (e.clientX - e.target.offsetLeft) / theScale;
   var y = (e.clientY - e.target.offsetTop) / theScale;
   if (state === 'gameOver' && roundWon) {
-    if (into(x, y, canvas.width / 2 - 180, 90 + 25, 360, 40)) {
+    if (into(x, y, canvas.width / 2 - 180, 115 + 70 * 0, 360, 60)) {
       if (upgradeState.armor < 4) { nextRound('armor'); }
-    } else if (into(x, y, canvas.width / 2 - 180, 90 + 25 + 50, 360, 40)) {
+    } else if (into(x, y, canvas.width / 2 - 180, 115 + 70 * 1, 360, 60)) {
       if (upgradeState.attack < 4) { nextRound('attack'); }
-    } else if (into(x, y, canvas.width / 2 - 180, 90 + 25 + 100, 360, 40)) {
+    } else if (into(x, y, canvas.width / 2 - 180, 115 + 70 * 2, 360, 60)) {
       if (upgradeState.hordeSize < 4) { nextRound('hordeSize'); }
-    } else if (into(x, y, canvas.width / 2 - 180, 90 + 25 + 150, 360, 40)) {
+    } else if (into(x, y, canvas.width / 2 - 180, 115 + 70 * 3, 360, 60)) {
       if (upgradeState.speed < 4) { nextRound('speed'); }
     }
   } else {
