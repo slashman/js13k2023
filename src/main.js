@@ -64,7 +64,7 @@ function start() {
   gameOverMessage = '';
   hordeStrength = 0;
   score = 0;
-  year = 1200;
+  year = 1237;
   round = -1;
   bgColor = '#a0e768';
   upgradeState = {
@@ -92,7 +92,7 @@ raf.start(function(elapsed) {
   }
 
   if (state === 'running') {
-    year += (elapsed * 0.2);
+    year += (elapsed * 0.15);
     if (year > 1299) {
       gameOver('The XIII century is over.');
     }
