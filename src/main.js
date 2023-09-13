@@ -225,7 +225,7 @@ raf.start(function(elapsed) {
         supplyLinesCount--;
         supplyLines.splice(j, 1);
         j--;
-        playSound(3);
+        playSound(supplyLinesCount ? 3 : 2);
         continue;
       }
     }
@@ -326,6 +326,7 @@ if (state === 'running') {
   if (city.radius < 6) {
     score += Math.floor(hordeStrength);
     playSound(6);
+    playSound(0);
     if (round === levels.length - 1) {
       gameOver('Congratulations, you conquered Rus!');
     } else {
@@ -668,13 +669,13 @@ function playMusic(i) {
 }
 
 const sfxs = [
-  [],
-  [],
-  [.8,,200,,.08,.22,,.3,1,-50,,,,1.3,1,,,,,1], // 2 - game over
-  [2.62,,269,.25,.04,1,4,.6,25,,,,.15,,.1,.1,.4,.7,.08,.45], // 3 - enemy death
+  [,,100,,.05,.4,4,0,,,100,,,2,,-0.7,.5,.37,.5,.35], // 0 - city destroyed
+  [2.62,,269,.25,.04,1,4,.6,25,,,,.15,,.1,.1,.4,.7,.08,.45], // 1 - Supply lines broken
+  [2.4,,210,.03,.4,.2,1,3,,-2,,,,1.4,3.5,,.09,.97,.3], // 2 - game over
+  [1.22,,269,.25,.04,1,4,.6,25,,,,.15,,.1,.1,.4,.7,.08,.45], // 3 - enemy death
   [.4,.4,261.6256,,.05,.02,,3,-6,,,,,2.2,,,,1.1,.01,.21], // 4 - sword slash
-  [.3,,332,.07,.03,.09,4,.3,12,,,,.03,,,.2,,.4,.03], // 5 - fire torch
-  [,,2,,,2,,,.8,.5,100,.06,,.3,,.06,.16], // 6 - win level
+  [.1,,332,.07,.03,.09,4,.3,12,,,,.03,,,.2,,.4,.03], // 5 - fire torch
+  [,0,100,,.8,1.2,,,-2,1.2,4,1,,1.5,,,.07,.8,.4], // 6 - win level
 ];
 
 function playSound(i) {
