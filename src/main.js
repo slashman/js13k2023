@@ -29,13 +29,13 @@ var levels = [
 
 var upgrades = {
   // Increases defense
-  armor: ['Padded Armor', 'Leather Armor', 'Scale Armor', 'Chain Armor'],
+  armor: ['Heavy coat', 'Brigandine', 'Hardened leather Lamellar', 'Plate Lamellar'],
   // Increases attack
-  attack: ['Fletching', 'Bodkin Arrow', 'Iron Casting', 'Blast Furnace'],
+  attack: ['Wooden Saddles', 'Stirrup', 'Hooked lance', 'Three-Quivered Arrows'],
   // Increases horde size
-  hordeSize: ['Chieftain', 'Mangudai', 'Steepes Lord', 'Great Khan'],
+  hordeSize: ['Jagutu-iin Darga', 'Mingghan-u Noyan', 'Tumetu-iin Noyan', 'Khan Khuu'],
   // Increases speed (horse quality)
-  speed: ['Husbandry 1', 'Husbandry 2', 'Husbandry 3', 'Husbandry 4'],
+  speed: ['Pure Ado', 'War Training', 'High Cantle', 'Tengri\'s Blessing'],
 }
 
 var baseHordeSpeed = 80;
